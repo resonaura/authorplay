@@ -1,0 +1,4 @@
+/app/vendor
+/storage/product-images/*
+/app/config.php
+/storage

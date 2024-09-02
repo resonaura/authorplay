@@ -1,0 +1,7 @@
+{
+  "require": {
+    "wertog/foxy-mvc": "dev-main",
+    "wertog/bottogram": "dev-main"
+  },
+  "minimum-stability": "dev"
+}

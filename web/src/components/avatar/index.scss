@@ -1,0 +1,149 @@
+.alchemy-avatar-wrapper {
+  position: relative;
+
+  .alchemy-avatar {
+    --avatar-size: 0px;
+
+    position: relative;
+
+    border: 1px solid var(--app-light-05a);
+
+    border-radius: 100%;
+
+    background: radial-gradient(
+      120.76% 197.5% at 5.64% -71.25%,
+      var(--app-light-05a) 0%,
+      var(--app-light-1a) 6.77%,
+      var(--app-light-05a) 78.65%
+    );
+
+    width: var(--avatar-size);
+    height: var(--avatar-size);
+    overflow: hidden;
+
+    &.size {
+      &-nano {
+        --avatar-size: 16px;
+      }
+
+      &-micro {
+        --avatar-size: 18px;
+      }
+
+      &-micro-20 {
+        --avatar-size: 20px;
+      }
+
+      &-tiny {
+        --avatar-size: 24px;
+      }
+
+      &-mini {
+        --avatar-size: 28px;
+      }
+
+      &-little {
+        --avatar-size: 32px;
+      }
+
+      &-small {
+        --avatar-size: 42px;
+      }
+
+      &-middle {
+        --avatar-size: 48px;
+      }
+
+      &-big {
+        --avatar-size: 72px;
+      }
+
+      &-large {
+        --avatar-size: 90px;
+      }
+    }
+
+    .avatar-image {
+      appearance: none;
+      transition: all 0.3s ease;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+
+      &.hidden {
+        opacity: 0;
+      }
+    }
+
+    .avatar-skeleton {
+      width: 100%;
+      height: 100%;
+
+      > span {
+        display: flex;
+        width: 100%;
+        height: 100%;
+
+        .react-loading-skeleton {
+          width: 100%;
+          height: 100%;
+
+          --base-color: var(--app-light-0a) !important;
+          --highlight-color: var(--app-light-05a) !important;
+        }
+      }
+    }
+
+    .avatar-image,
+    .avatar-icon,
+    .avatar-skeleton {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      animation: 0.3s fade-in;
+      margin: auto;
+
+      &.no-animation {
+        animation: 0s fade-in;
+      }
+    }
+
+    .avatar-icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      &.hidden {
+        display: flex !important;
+      }
+
+      svg {
+        animation: 0.3s fade-in;
+        width: calc(var(--avatar-size) * 0.7);
+        height: calc(var(--avatar-size) * 0.7);
+      }
+
+      span {
+        animation: 0.3s fade-in;
+        color: var(--app-light-5a);
+        font-weight: 300;
+        font-size: calc(var(--avatar-size) * 0.4);
+      }
+    }
+
+    &.error {
+      .avatar-icon {
+        svg {
+          width: 12px !important;
+        }
+      }
+    }
+
+    .loading-wrapper {
+      backdrop-filter: blur(0px);
+      border-radius: 100%;
+    }
+  }
+}

@@ -1,0 +1,7 @@
+CREATE TABLE
+  IF NOT EXISTS artists (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    Title VARCHAR(255) NOT NULL,
+    ShortTag VARCHAR(100),
+    YouTubeLink VARCHAR(255)
+  );

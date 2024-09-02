@@ -1,0 +1,13 @@
+{
+  "name": "authorplay-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "cd ../ && php -S localhost:3533",
+    "dev": "cd ../ && php -S localhost:3533"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

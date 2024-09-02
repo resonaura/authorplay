@@ -1,0 +1,7 @@
+.smooth-visibility {
+  transition: all 0.3s ease;
+
+  &.hidden {
+    opacity: 0;
+  }
+}
