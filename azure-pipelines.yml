@@ -56,7 +56,7 @@ steps:
 # Publish build artifacts for the web application
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)/dist'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'web_dist'
     publishLocation: 'Container'
   displayName: 'Publish web build artifacts'
