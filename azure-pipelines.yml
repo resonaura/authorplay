@@ -62,12 +62,13 @@ steps:
   displayName: 'Publish web build artifacts'
 
 
-# Clean the root directory before deployment (excluding API storage folder)
+# Clean the root directory before deployment (excluding API storage folder)# Clean the root directory before deployment (excluding API storage folder)
 - task: Bash@3
   inputs:
     targetType: 'inline'
     script: |
-      sshpass -p $sftp_password ssh -p $sftp_port -o StrictHostKeyChecking=no $sftp_username@$sftp_host "find $root_path -mindepth 1 ! -path \"$root_path/api/storage/*\" -delete"
+      export SSHPASS=$sftp_password
+      sshpass -e ssh -p $sftp_port -o StrictHostKeyChecking=no $sftp_username@$sftp_host "find $root_path -mindepth 1 ! -path \"$root_path/api/storage/*\" -delete"
   displayName: 'Clean root directory (excluding API storage)'
 
 # # Deploy files to the server via SFTP using a custom port
