@@ -56,10 +56,11 @@ steps:
 # Publish build artifacts for the web application
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtopublish: '$(System.DefaultWorkingDirectory)/dist'
-    artifactname: 'web_dist'
-    publishlocation: 'Container'
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/dist'
+    ArtifactName: 'web_dist'
+    publishLocation: 'Container'
   displayName: 'Publish web build artifacts'
+
 
 # Clean the root directory before deployment (excluding API storage folder)
 - task: Bash@3
