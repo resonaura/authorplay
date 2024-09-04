@@ -4,18 +4,7 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-variables:
-  # Define these as secret and normal variables in Azure DevOps
-  sftp_host: $(SFTP_HOST)          # SFTP host
-  sftp_username: $(SFTP_USERNAME)  # SFTP username
-  sftp_password: $(SFTP_PASSWORD)  # SFTP password (secret)
-  sftp_port: $(SFTP_PORT)          # Custom SSH port
-  root_path: $(ROOT_PATH)          # Root path
-  db_host: $(DB_HOST)              # Database host
-  db_user: $(DB_USER)              # Database user
-  db_password: $(DB_PASSWORD)      # Database password (secret)
-  db_name: $(DB_NAME)              # Database name
-
+# Steps to set up the pipeline
 steps:
 # # Install Node.js
 # - task: NodeTool@0
@@ -32,7 +21,7 @@ steps:
 #       sudo apt-get install -y php php-cli php-fpm php-mbstring php-xml php-zip php-curl
 #   displayName: 'Install the latest PHP 8.x'
 
-# # Install Composer dependencies for the PHP API
+# Install Composer dependencies for the PHP API
 # - task: Bash@3
 #   inputs:
 #     targetType: 'inline'
@@ -44,17 +33,22 @@ steps:
 #         mv config.example.php config.php
 #       fi
 #       # Update database connection in config.php
-#       sed -i "/\$DatabaseConnection = new DatabaseConnection/s/(\".*\", \".*\", \".*\", \".*\")/(\"$db_host\", \"$db_user\", \"$db_password\", \"$db_name\")/" config.php
+#       sed -i "/\$DatabaseConnection = new DatabaseConnection/s/(\".*\", \".*\", \".*\", \".*\")/(\"$DB_HOST\", \"$DB_USER\", \"$DB_PASSWORD\", \"$DB_NAME\")/" config.php
 #   displayName: 'Set up PHP API and update config'
+#   env:
+#     DB_HOST: $(DB_HOST)
+#     DB_USER: $(DB_USER)
+#     DB_PASSWORD: $(DB_PASSWORD)
+#     DB_NAME: $(DB_NAME)
 
-# # Install dependencies and build the web application
+# Install dependencies and build the web application
 # - script: |
 #     cd web
 #     npm install
 #     npm run build
 #   displayName: 'npm install and build web'
 
-# # Publish build artifacts for the web application
+# Publish build artifacts for the web application
 # - task: PublishBuildArtifacts@1
 #   inputs:
 #     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
@@ -62,14 +56,13 @@ steps:
 #     publishLocation: 'Container'
 #   displayName: 'Publish web build artifacts'
 
-
-# # Clean the root directory before deployment (excluding API storage folder)# Clean the root directory before deployment (excluding API storage folder)
+# Clean the root directory before deployment (excluding API storage folder)
 - task: Bash@3
   inputs:
     targetType: 'inline'
     script: |
-      export SSHPASS=$sftp_password
-      sshpass -e ssh -o StrictHostKeyChecking=no -p $sftp_port $sftp_username@$sftp_host "find $root_path -mindepth 1 ! -path \"$root_path/api/storage/*\" -delete"
+      export SSHPASS=$SFTP_PASSWORD
+      sshpass -e ssh -o StrictHostKeyChecking=no -p $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST "find $ROOT_PATH -mindepth 1 ! -path \"$ROOT_PATH/api/storage/*\" -delete"
   displayName: 'Clean root directory (excluding API storage)'
   env:
     SFTP_PASSWORD: $(SFTP_PASSWORD)
@@ -77,21 +70,18 @@ steps:
     SFTP_USERNAME: $(SFTP_USERNAME)
     SFTP_HOST: $(SFTP_HOST)
     ROOT_PATH: $(ROOT_PATH)
-    DB_HOST: $(DB_HOST)
-    DB_USER: $(DB_USER)
-    DB_PASSWORD: $(DB_PASSWORD)
-    DB_NAME: $(DB_NAME)
 
 # # Deploy files to the server via SFTP using a custom port
 # - task: Bash@3
 #   inputs:
 #     targetType: 'inline'
 #     script: |
-#       sshpass -p $sftp_password sftp -P $sftp_port -o StrictHostKeyChecking=no $sftp_username@$sftp_host <<EOF
+#       export SSHPASS=$SFTP_PASSWORD
+#       sshpass -e sftp -o StrictHostKeyChecking=no -P $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST <<EOF
 #       # Upload web application files
-#       put -r $(System.DefaultWorkingDirectory)/dist/* $root_path/
+#       put -r $(System.DefaultWorkingDirectory)/dist/* $ROOT_PATH/
 #       # Upload API files
-#       put -r ./api/* $root_path/api/
+#       put -r ./api/* $ROOT_PATH/api/
 #       exit
 # EOF
 #   displayName: 'Deploy files to server via SFTP'
