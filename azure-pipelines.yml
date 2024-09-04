@@ -1,0 +1,83 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  sftp_host: $(SFTP_HOST)
+  sftp_username: $(SFTP_USERNAME)
+  sftp_password: $(SFTP_PASSWORD)  # SFTP password as a secret
+  sftp_port: $(SFTP_PORT)  # Custom SSH port
+  root_path: $(ROOT_PATH)
+  db_host: $(DB_HOST)
+  db_user: $(DB_USER)
+  db_password: $(DB_PASSWORD)
+  db_name: $(DB_NAME)
+
+steps:
+# Install Node.js
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Install Node.js'
+
+# Install the latest PHP 8.x version using apt-get
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: |
+      sudo apt-get update
+      sudo apt-get install -y php php-cli php-fpm php-mbstring php-xml php-zip php-curl
+  displayName: 'Install the latest PHP 8.x'
+
+# Install Composer dependencies for the PHP API
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: |
+      cd api/app
+      composer install --ignore-platform-reqs
+      # Rename config.example.php to config.php
+      if [ -f config.example.php ]; then
+        mv config.example.php config.php
+      fi
+      # Update database connection in config.php
+      sed -i "/\$DatabaseConnection = new DatabaseConnection/s/(\".*\", \".*\", \".*\", \".*\")/(\"$db_host\", \"$db_user\", \"$db_password\", \"$db_name\")/" config.php
+  displayName: 'Set up PHP API and update config'
+
+# Install dependencies and build the web application
+- script: |
+    npm install
+    npm run build
+  displayName: 'npm install and build web'
+
+# Publish build artifacts for the web application
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtopublish: '$(System.DefaultWorkingDirectory)/dist'
+    artifactname: 'web_dist'
+    publishlocation: 'Container'
+  displayName: 'Publish web build artifacts'
+
+# Clean the root directory before deployment (excluding API storage folder)
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: |
+      sshpass -p $sftp_password ssh -p $sftp_port -o StrictHostKeyChecking=no $sftp_username@$sftp_host "find $root_path -mindepth 1 ! -path \"$root_path/api/storage/*\" -delete"
+  displayName: 'Clean root directory (excluding API storage)'
+
+# # Deploy files to the server via SFTP using a custom port
+# - task: Bash@3
+#   inputs:
+#     targetType: 'inline'
+#     script: |
+#       sshpass -p $sftp_password sftp -P $sftp_port -o StrictHostKeyChecking=no $sftp_username@$sftp_host <<EOF
+#       # Upload web application files
+#       put -r $(System.DefaultWorkingDirectory)/dist/* $root_path/
+#       # Upload API files
+#       put -r ./api/* $root_path/api/
+#       exit
+# EOF
+#   displayName: 'Deploy files to server via SFTP'
