@@ -5,15 +5,16 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  sftp_host: $(SFTP_HOST)
-  sftp_username: $(SFTP_USERNAME)
-  sftp_password: $(SFTP_PASSWORD)  # SFTP password as a secret
-  sftp_port: $(SFTP_PORT)  # Custom SSH port
-  root_path: $(ROOT_PATH)
-  db_host: $(DB_HOST)
-  db_user: $(DB_USER)
-  db_password: $(DB_PASSWORD)
-  db_name: $(DB_NAME)
+  # Define these as secret and normal variables in Azure DevOps
+  sftp_host: $(SFTP_HOST)          # SFTP host
+  sftp_username: $(SFTP_USERNAME)  # SFTP username
+  sftp_password: $(SFTP_PASSWORD)  # SFTP password (secret)
+  sftp_port: $(SFTP_PORT)          # Custom SSH port
+  root_path: $(ROOT_PATH)          # Root path
+  db_host: $(DB_HOST)              # Database host
+  db_user: $(DB_USER)              # Database user
+  db_password: $(DB_PASSWORD)      # Database password (secret)
+  db_name: $(DB_NAME)              # Database name
 
 steps:
 # # Install Node.js
@@ -70,6 +71,16 @@ steps:
       export SSHPASS=$sftp_password
       sshpass -e ssh -o StrictHostKeyChecking=no -p $sftp_port $sftp_username@$sftp_host "find $root_path -mindepth 1 ! -path \"$root_path/api/storage/*\" -delete"
   displayName: 'Clean root directory (excluding API storage)'
+  env:
+    SFTP_PASSWORD: $(SFTP_PASSWORD)
+    SFTP_PORT: $(SFTP_PORT)
+    SFTP_USERNAME: $(SFTP_USERNAME)
+    SFTP_HOST: $(SFTP_HOST)
+    ROOT_PATH: $(ROOT_PATH)
+    DB_HOST: $(DB_HOST)
+    DB_USER: $(DB_USER)
+    DB_PASSWORD: $(DB_PASSWORD)
+    DB_NAME: $(DB_NAME)
 
 # # Deploy files to the server via SFTP using a custom port
 # - task: Bash@3
