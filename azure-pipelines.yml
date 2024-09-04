@@ -19,7 +19,7 @@ steps:
 # Install Node.js
 - task: NodeTool@0
   inputs:
-    versionSpec: '10.x'
+    versionSpec: '22.x'
   displayName: 'Install Node.js'
 
 # Install the latest PHP 8.x version using apt-get
