@@ -122,15 +122,35 @@ steps:
   inputs:
     targetType: 'inline'
     script: |      
-      # Upload web application files
-      sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT -r $(Build.ArtifactStagingDirectory)/dist/* $(Build.ArtifactStagingDirectory)/dist/.* $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/
+      # Log: Starting deployment process
+      echo "Starting deployment process..."
       
-      # Upload API files, including hidden files like .htaccess
-      sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT -r $(System.DefaultWorkingDirectory)/api/* $(System.DefaultWorkingDirectory)/api/.* $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/api/
+      # Log: Ensuring the API directory exists
+      echo "Ensuring the API directory exists on the server..."
+      sshpass -e ssh -o StrictHostKeyChecking=no -p $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST "mkdir -p $ROOT_PATH/api"
       
-      # Verify the upload
-      echo "Verifying uploaded files:"
+      # Log: Uploading web application files
+      echo "Uploading web application files..."
+      sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT -r $(Build.ArtifactStagingDirectory)/dist/* $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/
+      
+      # Log: Uploading .htaccess from root folder
+      echo "Uploading .htaccess from the root folder..."
+      sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT $(Build.ArtifactStagingDirectory)/dist/.htaccess $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/
+      
+      # Log: Uploading API files
+      echo "Uploading API files..."
+      sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT -r $(System.DefaultWorkingDirectory)/api/* $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/api/
+      
+      # Log: Uploading .htaccess from API folder
+      echo "Uploading .htaccess from the API folder..."
+      sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT $(System.DefaultWorkingDirectory)/api/.htaccess $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/api/
+      
+      # Log: Verifying uploaded files
+      echo "Verifying uploaded files..."
       sshpass -e ssh -o StrictHostKeyChecking=no -p $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST "ls -la $ROOT_PATH $ROOT_PATH/api $ROOT_PATH/api/app"
+      
+      # Log: Deployment process completed
+      echo "Deployment process completed."
   displayName: 'Deploy files to server using scp'
   env:
     SSHPASS: $(SFTP_PASSWORD)
