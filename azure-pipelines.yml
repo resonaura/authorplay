@@ -45,8 +45,9 @@ steps:
 - script: |
     cd web
     npm install
-    npm run build
+    npm run build -- --output-path=$(Build.ArtifactStagingDirectory)/dist
   displayName: 'npm install and build web'
+
 
 - script: |
     echo "Contents of $(Build.ArtifactStagingDirectory):"
@@ -134,7 +135,7 @@ steps:
       
       # Upload API files
       sshpass -e sftp -o StrictHostKeyChecking=no -P $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST << SFTP_COMMANDS
-      put -r ./api/* $ROOT_PATH/api/
+      put -r $(System.DefaultWorkingDirectory)/api/* $ROOT_PATH/api/
       SFTP_COMMANDS
   displayName: 'Deploy files to server via SFTP'
   env:
@@ -143,4 +144,5 @@ steps:
     SFTP_USERNAME: $(SFTP_USERNAME)
     SFTP_HOST: $(SFTP_HOST)
     ROOT_PATH: $(ROOT_PATH)
+
 
