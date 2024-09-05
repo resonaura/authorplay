@@ -63,22 +63,34 @@ steps:
     script: |
       export SSHPASS=$SFTP_PASSWORD
       sshpass -e ssh -o StrictHostKeyChecking=no -p $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST "
-        ROOT_PATH=$(echo $ROOT_PATH | sed 's/^~/\$HOME/')
+        ROOT_PATH=$(echo $ROOT_PATH | sed 's|^~|\$HOME|')
         eval ROOT_PATH=$ROOT_PATH
-        find \"\$ROOT_PATH\" -mindepth 1 \\
-        ! -path \"\$ROOT_PATH/api/storage\" \\
-        ! -path \"\$ROOT_PATH/api/storage/*\" \\
-        -print0 | xargs -0 rm -rf
+        echo \"ROOT_PATH is: \$ROOT_PATH\"
+        
+        # Move storage directory to a temporary location
+        mv \"\$ROOT_PATH/api/storage\" \"/tmp/storage_backup\"
+        
+        # Remove everything in ROOT_PATH
+        rm -rf \"\$ROOT_PATH\"/*
+        
+        # Recreate necessary directories
+        mkdir -p \"\$ROOT_PATH/api\"
+        
+        # Move storage back to its original location
+        mv \"/tmp/storage_backup\" \"\$ROOT_PATH/api/storage\"
+        
+        echo \"Cleanup completed. Remaining contents:\"
+        ls -la \"\$ROOT_PATH\"
+        echo \"Contents of api directory:\"
+        ls -la \"\$ROOT_PATH/api\"
       "
-  displayName: 'Clean root directory (excluding API storage)'
+  displayName: 'Clean root directory (preserving API storage)'
   env:
     SFTP_PASSWORD: $(SFTP_PASSWORD)
     SFTP_PORT: $(SFTP_PORT)
     SFTP_USERNAME: $(SFTP_USERNAME)
     SFTP_HOST: $(SFTP_HOST)
     ROOT_PATH: $(ROOT_PATH)
-
-
 
 # # Deploy files to the server via SFTP using a custom port
 # - task: Bash@3
