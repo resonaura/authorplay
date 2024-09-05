@@ -6,55 +6,55 @@ pool:
 
 # Steps to set up the pipeline
 steps:
-# # Install Node.js
-# - task: NodeTool@0
-#   inputs:
-#     versionSpec: '22.x'
-#   displayName: 'Install Node.js'
+# Install Node.js
+- task: NodeTool@0
+  inputs:
+    versionSpec: '22.x'
+  displayName: 'Install Node.js'
 
-# # Install the latest PHP 8.x version using apt-get
-# - task: Bash@3
-#   inputs:
-#     targetType: 'inline'
-#     script: |
-#       sudo apt-get update
-#       sudo apt-get install -y php php-cli php-fpm php-mbstring php-xml php-zip php-curl
-#   displayName: 'Install the latest PHP 8.x'
+# Install the latest PHP 8.x version using apt-get
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: |
+      sudo apt-get update
+      sudo apt-get install -y php php-cli php-fpm php-mbstring php-xml php-zip php-curl
+  displayName: 'Install the latest PHP 8.x'
 
 # Install Composer dependencies for the PHP API
-# - task: Bash@3
-#   inputs:
-#     targetType: 'inline'
-#     script: |
-#       cd api/app
-#       composer install --ignore-platform-reqs
-#       # Rename config.example.php to config.php
-#       if [ -f config.example.php ]; then
-#         mv config.example.php config.php
-#       fi
-#       # Update database connection in config.php
-#       sed -i "/\$DatabaseConnection = new DatabaseConnection/s/(\".*\", \".*\", \".*\", \".*\")/(\"$DB_HOST\", \"$DB_USER\", \"$DB_PASSWORD\", \"$DB_NAME\")/" config.php
-#   displayName: 'Set up PHP API and update config'
-#   env:
-#     DB_HOST: $(DB_HOST)
-#     DB_USER: $(DB_USER)
-#     DB_PASSWORD: $(DB_PASSWORD)
-#     DB_NAME: $(DB_NAME)
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: |
+      cd api/app
+      composer install --ignore-platform-reqs
+      # Rename config.example.php to config.php
+      if [ -f config.example.php ]; then
+        mv config.example.php config.php
+      fi
+      # Update database connection in config.php
+      sed -i "/\$DatabaseConnection = new DatabaseConnection/s/(\".*\", \".*\", \".*\", \".*\")/(\"$DB_HOST\", \"$DB_USER\", \"$DB_PASSWORD\", \"$DB_NAME\")/" config.php
+  displayName: 'Set up PHP API and update config'
+  env:
+    DB_HOST: $(DB_HOST)
+    DB_USER: $(DB_USER)
+    DB_PASSWORD: $(DB_PASSWORD)
+    DB_NAME: $(DB_NAME)
 
 # Install dependencies and build the web application
-# - script: |
-#     cd web
-#     npm install
-#     npm run build
-#   displayName: 'npm install and build web'
+- script: |
+    cd web
+    npm install
+    npm run build
+  displayName: 'npm install and build web'
 
 # Publish build artifacts for the web application
-# - task: PublishBuildArtifacts@1
-#   inputs:
-#     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-#     ArtifactName: 'web_dist'
-#     publishLocation: 'Container'
-#   displayName: 'Publish web build artifacts'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'web_dist'
+    publishLocation: 'Container'
+  displayName: 'Publish web build artifacts'
 
 # Clean the root directory before deployment (excluding API storage folder)
 - task: Bash@3
@@ -106,17 +106,16 @@ steps:
 
 
 
-# # Deploy files to the server via SFTP using a custom port
-# - task: Bash@3
-#   inputs:
-#     targetType: 'inline'
-#     script: |
-#       export SSHPASS=$SFTP_PASSWORD
-#       sshpass -e sftp -o StrictHostKeyChecking=no -P $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST <<EOF
-#       # Upload web application files
-#       put -r $(System.DefaultWorkingDirectory)/dist/* $ROOT_PATH/
-#       # Upload API files
-#       put -r ./api/* $ROOT_PATH/api/
-#       exit
-# EOF
-#   displayName: 'Deploy files to server via SFTP'
+# Deploy files to the server via SFTP using a custom port
+- task: Bash@3
+  inputs:
+    targetType: 'inline'
+    script: |
+      export SSHPASS=$SFTP_PASSWORD
+      sshpass -e sftp -o StrictHostKeyChecking=no -P $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST <<EOF
+      # Upload web application files
+      put -r $(System.DefaultWorkingDirectory)/dist/* $ROOT_PATH/
+      # Upload API files
+      put -r ./api/* $ROOT_PATH/api/
+      exit
+  displayName: 'Deploy files to server via SFTP'
