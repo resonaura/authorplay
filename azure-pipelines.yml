@@ -62,7 +62,7 @@ steps:
     targetType: 'inline'
     script: |
       export SSHPASS=$SFTP_PASSWORD
-      sshpass -e ssh -o StrictHostKeyChecking=no -p $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST "find $ROOT_PATH -mindepth 1 ! -path \"$ROOT_PATH/api/storage/*\" -delete"
+      sshpass -e ssh -o StrictHostKeyChecking=no -p $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST "find $ROOT_PATH -mindepth 1 -not \( -path \"$ROOT_PATH/api/storage\" -prune \) -not \( -path \"$ROOT_PATH/api/storage/*\" -prune \) -delete"
   displayName: 'Clean root directory (excluding API storage)'
   env:
     SFTP_PASSWORD: $(SFTP_PASSWORD)
