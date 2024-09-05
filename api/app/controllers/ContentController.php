@@ -219,13 +219,17 @@ class ContentController extends Controller
   public function Stream(): void
   {
     $ID = (int) ($_GET['id'] ?? 0);
-    $AudioPath = AUDIO_STORAGE . '/' . $ID . '.flac';
+    $AudioPathFlac = AUDIO_STORAGE . '/' . $ID . '.flac';
+    $AudioPathMp3 = AUDIO_STORAGE . '/' . $ID . '.mp3';
 
-    if (file_exists($AudioPath)) {
+    if (file_exists($AudioPathFlac) || file_exists($AudioPathMp3)) {
+      // Выбираем приоритетный файл (flac -> mp3)
+      $AudioPath = file_exists($AudioPathFlac) ? $AudioPathFlac : $AudioPathMp3;
       $fileSize = filesize($AudioPath);
       $file = fopen($AudioPath, 'rb');
+      $mimeType = file_exists($AudioPathFlac) ? 'audio/flac' : 'audio/mpeg';
 
-      // Check if there is a range set in the HTTP header
+      // Проверяем заголовок HTTP Range для частичной загрузки
       if (isset($_SERVER['HTTP_RANGE'])) {
         list($start, $end) = array_replace([0, $fileSize - 1], explode('-', substr($_SERVER['HTTP_RANGE'], 6), 2));
         $end = ('' === $end) ? ($fileSize - 1) : min(abs(intval($end)), $fileSize - 1);
@@ -244,29 +248,29 @@ class ContentController extends Controller
         header('Content-Length: ' . $fileSize);
       }
 
-      // Common headers
-      header('Content-Type: audio/flac');
+      // Общие заголовки
+      header('Content-Type: ' . $mimeType);
       header('Content-Disposition: inline; filename="' . basename($AudioPath) . '"');
       header('Accept-Ranges: bytes');
       header('Expires: 0');
       header('Cache-Control: must-revalidate');
       header('Pragma: public');
 
-      // Clear system output buffer
+      // Очищаем системный буфер
       flush();
 
-      // Set the file pointer to the desired start position
+      // Устанавливаем указатель файла на нужную позицию
       fseek($file, isset($start) ? $start : 0);
 
-      // Stream the audio file
+      // Стримим аудиофайл
       while (!feof($file) && (connection_status() == 0)) {
-        echo fread($file, 1024 * 1024); // Read in chunks of 1 MB
-        flush(); // Flush the output buffer
+        echo fread($file, 1024 * 1024); // Чтение блоками по 1 МБ
+        flush(); // Очистка буфера вывода
       }
 
       fclose($file);
     } else {
-      // Return JSON response if the song is not found or the file does not exist
+      // Возвращаем JSON ответ, если файл не найден
       header('Content-Type: application/json');
       echo json_encode([
         'ok' => false,
@@ -276,6 +280,7 @@ class ContentController extends Controller
       http_response_code(404);
     }
   }
+
 
 
 }

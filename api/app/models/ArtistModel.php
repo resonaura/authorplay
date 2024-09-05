@@ -17,7 +17,7 @@ class Artist extends DatabaseTableItemModel
     parent::__construct([
       ...$Parameters,
       'Resources' => [
-        'Poster' => PUBLIC_STORAGE_URL . '/images/artists/' . $Parameters['ID'] . '.webp'
+        'Poster' => PUBLIC_STORAGE_URL . '/images/artists/' . $Parameters['ID'] . '.webp?v=2'
       ]
     ]);
   }

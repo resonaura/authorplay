@@ -23,7 +23,7 @@ class Song extends DatabaseTableItemModel
       ...$Parameters,
       'Resources' => [
         'Audio' => PUBLIC_ROOT_URL . 'content/stream/?id=' . $Parameters['ID'],
-        'Poster' => PUBLIC_STORAGE_URL . '/images/albums/' . $Parameters['AlbumID'] . '.webp'
+        'Poster' => PUBLIC_STORAGE_URL . '/images/albums/' . $Parameters['AlbumID'] . '.webp?v=2'
       ]
     ]);
   }
