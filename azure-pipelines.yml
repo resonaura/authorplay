@@ -126,7 +126,7 @@ steps:
     targetType: 'inline'
     script: |
       # Ensure the target directories exist
-      sshpass -e ssh -o StrictHostKeyChecking=no -p $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST "mkdir -p $ROOT_PATH $ROOT_PATH/api"
+      sshpass -e ssh -o StrictHostKeyChecking=no -p $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST "mkdir -p $ROOT_PATH $ROOT_PATH/api $ROOT_PATH/api/app $ROOT_PATH/api/app/controllers $ROOT_PATH/api/app/tools $ROOT_PATH/api/app/backup $ROOT_PATH/api/app/vendor/wertog/bottogram"
       
       # Upload web application files
       sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT -r $(Build.ArtifactStagingDirectory)/dist/* $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/
