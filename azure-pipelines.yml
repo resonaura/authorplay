@@ -121,20 +121,12 @@ steps:
 - task: Bash@3
   inputs:
     targetType: 'inline'
-    script: |
-      # Ensure the target directories exist
-      sshpass -e ssh -o StrictHostKeyChecking=no -p $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST "mkdir -p $ROOT_PATH $ROOT_PATH/api $ROOT_PATH/api/app $ROOT_PATH/api/app/controllers $ROOT_PATH/api/app/tools $ROOT_PATH/api/app/backup $ROOT_PATH/api/app/vendor/wertog/bottogram"
-      
+    script: |      
       # Upload web application files
-      sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT -r $(Build.ArtifactStagingDirectory)/dist/* $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/
+      sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT -r $(Build.ArtifactStagingDirectory)/dist/. $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/
       
-      # Upload API files, including .htaccess
-      sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT -r $(System.DefaultWorkingDirectory)/api/* $(System.DefaultWorkingDirectory)/api/.htaccess $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/api/
-      
-      # Upload .htaccess in app directory if it exists
-      if [ -f "$(System.DefaultWorkingDirectory)/api/app/.htaccess" ]; then
-        sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT $(System.DefaultWorkingDirectory)/api/app/.htaccess $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/api/app/
-      fi
+      # Upload API files, including hidden files like .htaccess
+      sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT -r $(System.DefaultWorkingDirectory)/api/. $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/api/
       
       # Verify the upload
       echo "Verifying uploaded files:"
