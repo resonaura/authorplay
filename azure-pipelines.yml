@@ -131,12 +131,17 @@ steps:
       # Upload web application files
       sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT -r $(Build.ArtifactStagingDirectory)/dist/* $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/
       
-      # Upload API files
-      sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT -r $(System.DefaultWorkingDirectory)/api/* $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/api/
+      # Upload API files, including .htaccess
+      sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT -r $(System.DefaultWorkingDirectory)/api/* $(System.DefaultWorkingDirectory)/api/.htaccess $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/api/
+      
+      # Upload .htaccess in app directory if it exists
+      if [ -f "$(System.DefaultWorkingDirectory)/api/app/.htaccess" ]; then
+        sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT $(System.DefaultWorkingDirectory)/api/app/.htaccess $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/api/app/
+      fi
       
       # Verify the upload
       echo "Verifying uploaded files:"
-      sshpass -e ssh -o StrictHostKeyChecking=no -p $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST "ls -R $ROOT_PATH"
+      sshpass -e ssh -o StrictHostKeyChecking=no -p $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST "ls -la $ROOT_PATH $ROOT_PATH/api $ROOT_PATH/api/app"
   displayName: 'Deploy files to server using scp'
   env:
     SSHPASS: $(SFTP_PASSWORD)
