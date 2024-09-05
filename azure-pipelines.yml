@@ -112,10 +112,21 @@ steps:
     targetType: 'inline'
     script: |
       export SSHPASS=$SFTP_PASSWORD
-      sshpass -e sftp -o StrictHostKeyChecking=no -P $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST <<EOF
+      
       # Upload web application files
-      put -r $(System.DefaultWorkingDirectory)/dist/* $ROOT_PATH/
+      sshpass -e sftp -o StrictHostKeyChecking=no -P $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST << SFTP_COMMANDS
+      put -r $(Build.ArtifactStagingDirectory)/dist/* $ROOT_PATH/
+      SFTP_COMMANDS
+      
       # Upload API files
+      sshpass -e sftp -o StrictHostKeyChecking=no -P $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST << SFTP_COMMANDS
       put -r ./api/* $ROOT_PATH/api/
-      exit
+      SFTP_COMMANDS
   displayName: 'Deploy files to server via SFTP'
+  env:
+    SFTP_PASSWORD: $(SFTP_PASSWORD)
+    SFTP_PORT: $(SFTP_PORT)
+    SFTP_USERNAME: $(SFTP_USERNAME)
+    SFTP_HOST: $(SFTP_HOST)
+    ROOT_PATH: $(ROOT_PATH)
+
