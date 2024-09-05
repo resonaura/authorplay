@@ -45,7 +45,8 @@ steps:
 - script: |
     cd web
     npm install
-    npm run build -- --output-path=$(Build.ArtifactStagingDirectory)/dist
+    export BUILD_OUTPUT_PATH=$(Build.ArtifactStagingDirectory)/dist
+    npm run build
   displayName: 'npm install and build web'
 
 
