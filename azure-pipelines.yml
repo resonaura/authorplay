@@ -67,17 +67,16 @@ steps:
         eval ROOT_PATH=$ROOT_PATH
         echo \"ROOT_PATH is: \$ROOT_PATH\"
         
-        # Move storage directory to a temporary location
-        mv \"\$ROOT_PATH/api/storage\" \"/tmp/storage_backup\"
+        # Create a list of items to remove, excluding api/storage
+        find \"\$ROOT_PATH\" -mindepth 1 ! -path \"\$ROOT_PATH/api/storage\" ! -path \"\$ROOT_PATH/api/storage/*\" > /tmp/files_to_remove.txt
         
-        # Remove everything in ROOT_PATH
-        rm -rf \"\$ROOT_PATH\"/*
+        # Remove files and directories from the list
+        while IFS= read -r file; do
+          rm -rf \"\$file\"
+        done < /tmp/files_to_remove.txt
         
-        # Recreate necessary directories
-        mkdir -p \"\$ROOT_PATH/api\"
-        
-        # Move storage back to its original location
-        mv \"/tmp/storage_backup\" \"\$ROOT_PATH/api/storage\"
+        # Clean up the temporary file
+        rm /tmp/files_to_remove.txt
         
         echo \"Cleanup completed. Remaining contents:\"
         ls -la \"\$ROOT_PATH\"
@@ -91,6 +90,7 @@ steps:
     SFTP_USERNAME: $(SFTP_USERNAME)
     SFTP_HOST: $(SFTP_HOST)
     ROOT_PATH: $(ROOT_PATH)
+
 
 # # Deploy files to the server via SFTP using a custom port
 # - task: Bash@3
