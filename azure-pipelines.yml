@@ -48,6 +48,13 @@ steps:
     npm run build
   displayName: 'npm install and build web'
 
+- script: |
+    echo "Contents of $(Build.ArtifactStagingDirectory):"
+    ls -R $(Build.ArtifactStagingDirectory)
+    echo "Contents of $(System.DefaultWorkingDirectory):"
+    ls -R $(System.DefaultWorkingDirectory)
+  displayName: 'List directory contents'
+
 # Publish build artifacts for the web application
 - task: PublishBuildArtifacts@1
   inputs:
@@ -55,6 +62,13 @@ steps:
     ArtifactName: 'web_dist'
     publishLocation: 'Container'
   displayName: 'Publish web build artifacts'
+  
+- script: |
+    echo "Contents of $(Build.ArtifactStagingDirectory):"
+    ls -R $(Build.ArtifactStagingDirectory)
+    echo "Contents of $(System.DefaultWorkingDirectory):"
+    ls -R $(System.DefaultWorkingDirectory)
+  displayName: 'List directory contents'
 
 # Clean the root directory before deployment (excluding API storage folder)
 - task: Bash@3
