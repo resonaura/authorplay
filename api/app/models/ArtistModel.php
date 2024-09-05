@@ -9,7 +9,7 @@ class Artist extends DatabaseTableItemModel
   public int $ID;
   public string $Title;
   public string $ShortTag;
-  public string $YouTubeLink;
+  public ?string $YouTubeLink;
   public ?array $Resources;
 
   public function __construct(array $Parameters = [])
