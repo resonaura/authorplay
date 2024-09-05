@@ -88,7 +88,7 @@ class ContentManagerModel
     return $this->Database->FetchQuery("SELECT s.*, ar.Title as ArtistName, ar.ShortTag as ArtistShortTag, al.Title as AlbumName FROM songs s 
                                         JOIN artists ar ON s.ArtistID = ar.ID 
                                         JOIN albums al ON s.AlbumID = al.ID 
-                                        ORDER by s.Year DESC, s.ID DESC LIMIT $Limit", true, Song::class) ?? [];
+                                        ORDER by al.Year DESC, s.ID DESC LIMIT $Limit", true, Song::class) ?? [];
   }
 
   /**
@@ -103,7 +103,7 @@ class ContentManagerModel
                                         JOIN artists ar ON s.ArtistID = ar.ID 
                                         JOIN albums al ON s.AlbumID = al.ID 
                                         WHERE s.ArtistID='$ArtistID' 
-                                        ORDER by s.Year DESC, s.ID DESC LIMIT $Limit", true, Song::class) ?? [];
+                                        ORDER by al.Year DESC, s.ID DESC LIMIT $Limit", true, Song::class) ?? [];
   }
 
   /**
