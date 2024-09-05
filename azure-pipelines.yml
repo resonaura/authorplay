@@ -67,29 +67,43 @@ steps:
         eval ROOT_PATH=$ROOT_PATH
         echo \"ROOT_PATH is: \$ROOT_PATH\"
         
-        # Create a list of items to remove, excluding api/storage
-        find \"\$ROOT_PATH\" -mindepth 1 ! -path \"\$ROOT_PATH/api/storage\" ! -path \"\$ROOT_PATH/api/storage/*\" > /tmp/files_to_remove.txt
-        
-        # Remove files and directories from the list
-        while IFS= read -r file; do
-          rm -rf \"\$file\"
-        done < /tmp/files_to_remove.txt
-        
-        # Clean up the temporary file
-        rm /tmp/files_to_remove.txt
+        # Check if api/storage exists
+        if [ -d \"\$ROOT_PATH/api/storage\" ]; then
+          echo \"api/storage directory exists\"
+          
+          # Remove everything except api/storage
+          find \"\$ROOT_PATH\" -mindepth 1 ! -path \"\$ROOT_PATH/api\" ! -path \"\$ROOT_PATH/api/storage\" ! -path \"\$ROOT_PATH/api/storage/*\" -delete
+          
+          # If api directory is empty except for storage, remove it
+          if [ \$(find \"\$ROOT_PATH/api\" -mindepth 1 ! -path \"\$ROOT_PATH/api/storage\" | wc -l) -eq 0 ]; then
+            mv \"\$ROOT_PATH/api/storage\" \"\$ROOT_PATH/storage\"
+            rmdir \"\$ROOT_PATH/api\"
+          fi
+        else
+          echo \"api/storage directory does not exist\"
+          # Remove everything
+          rm -rf \"\$ROOT_PATH\"/*
+        fi
         
         echo \"Cleanup completed. Remaining contents:\"
         ls -la \"\$ROOT_PATH\"
-        echo \"Contents of api directory:\"
-        ls -la \"\$ROOT_PATH/api\"
+        if [ -d \"\$ROOT_PATH/api\" ]; then
+          echo \"Contents of api directory:\"
+          ls -la \"\$ROOT_PATH/api\"
+        fi
+        if [ -d \"\$ROOT_PATH/storage\" ]; then
+          echo \"Contents of storage directory:\"
+          ls -la \"\$ROOT_PATH/storage\"
+        fi
       "
-  displayName: 'Clean root directory (preserving API storage)'
+  displayName: 'Clean root directory (preserving API storage if exists)'
   env:
     SFTP_PASSWORD: $(SFTP_PASSWORD)
     SFTP_PORT: $(SFTP_PORT)
     SFTP_USERNAME: $(SFTP_USERNAME)
     SFTP_HOST: $(SFTP_HOST)
     ROOT_PATH: $(ROOT_PATH)
+
 
 
 # # Deploy files to the server via SFTP using a custom port
