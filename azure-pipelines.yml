@@ -120,8 +120,6 @@ steps:
     SFTP_HOST: $(SFTP_HOST)
     ROOT_PATH: $(ROOT_PATH)
 
-
-
 # Deploy files to the server via SFTP using a custom port
 - task: Bash@3
   inputs:
@@ -129,14 +127,19 @@ steps:
     script: |
       export SSHPASS=$SFTP_PASSWORD
       
+      # Create necessary directories
+      sshpass -e ssh -o StrictHostKeyChecking=no -p $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST "mkdir -p $ROOT_PATH $ROOT_PATH/api"
+      
       # Upload web application files
       sshpass -e sftp -o StrictHostKeyChecking=no -P $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST << SFTP_COMMANDS
-      put -r $(Build.ArtifactStagingDirectory)/dist/* $ROOT_PATH/
+      cd $ROOT_PATH
+      put -r $(Build.ArtifactStagingDirectory)/dist/*
       SFTP_COMMANDS
       
       # Upload API files
       sshpass -e sftp -o StrictHostKeyChecking=no -P $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST << SFTP_COMMANDS
-      put -r $(System.DefaultWorkingDirectory)/api/* $ROOT_PATH/api/
+      cd $ROOT_PATH/api
+      put -r $(System.DefaultWorkingDirectory)/api/*
       SFTP_COMMANDS
   displayName: 'Deploy files to server via SFTP'
   env:
@@ -145,5 +148,6 @@ steps:
     SFTP_USERNAME: $(SFTP_USERNAME)
     SFTP_HOST: $(SFTP_HOST)
     ROOT_PATH: $(ROOT_PATH)
+
 
 
