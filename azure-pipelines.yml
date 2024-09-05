@@ -120,34 +120,31 @@ steps:
     SFTP_HOST: $(SFTP_HOST)
     ROOT_PATH: $(ROOT_PATH)
 
-# Deploy files to the server via SFTP using a custom port
+# Deploy files to the server using scp
 - task: Bash@3
   inputs:
     targetType: 'inline'
     script: |
-      export SSHPASS=$SFTP_PASSWORD
-      
-      # Create necessary directories
+      # Ensure the target directories exist
       sshpass -e ssh -o StrictHostKeyChecking=no -p $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST "mkdir -p $ROOT_PATH $ROOT_PATH/api"
       
       # Upload web application files
-      sshpass -e sftp -o StrictHostKeyChecking=no -P $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST << SFTP_COMMANDS
-      cd $ROOT_PATH
-      put -r $(Build.ArtifactStagingDirectory)/dist/*
-      SFTP_COMMANDS
+      sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT -r $(Build.ArtifactStagingDirectory)/dist/* $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/
       
       # Upload API files
-      sshpass -e sftp -o StrictHostKeyChecking=no -P $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST << SFTP_COMMANDS
-      cd $ROOT_PATH/api
-      put -r $(System.DefaultWorkingDirectory)/api/*
-      SFTP_COMMANDS
-  displayName: 'Deploy files to server via SFTP'
+      sshpass -e scp -o StrictHostKeyChecking=no -P $SFTP_PORT -r $(System.DefaultWorkingDirectory)/api/* $SFTP_USERNAME@$SFTP_HOST:$ROOT_PATH/api/
+      
+      # Verify the upload
+      echo "Verifying uploaded files:"
+      sshpass -e ssh -o StrictHostKeyChecking=no -p $SFTP_PORT $SFTP_USERNAME@$SFTP_HOST "ls -R $ROOT_PATH"
+  displayName: 'Deploy files to server using scp'
   env:
-    SFTP_PASSWORD: $(SFTP_PASSWORD)
+    SSHPASS: $(SFTP_PASSWORD)
     SFTP_PORT: $(SFTP_PORT)
     SFTP_USERNAME: $(SFTP_USERNAME)
     SFTP_HOST: $(SFTP_HOST)
     ROOT_PATH: $(ROOT_PATH)
+
 
 
 
