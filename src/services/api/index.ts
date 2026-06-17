@@ -98,19 +98,19 @@ export class APIService {
     return { ok: true, code: 200, data: songs };
   }
 
-  public async getSongByID(id: number): Promise<IApiResponse<ISong>> {
+  public async getSongByID(_id: number): Promise<IApiResponse<ISong>> {
     return { ok: false, code: 501, error: 'Not implemented' };
   }
 
-  public async getAlbum(id: number): Promise<IApiResponse<IAlbum>> {
+  public async getAlbum(_id: number): Promise<IApiResponse<IAlbum>> {
     return { ok: false, code: 501, error: 'Not implemented' };
   }
 
-  public async getArtistAlbums(artistId: number): Promise<IApiResponse<IAlbum[]>> {
+  public async getArtistAlbums(_artistId: number): Promise<IApiResponse<IAlbum[]>> {
     return { ok: false, code: 501, error: 'Not implemented' };
   }
 
-  public async getAlbumSongs(id: number): Promise<IApiResponse<ISong[]>> {
+  public async getAlbumSongs(_id: number): Promise<IApiResponse<ISong[]>> {
     return { ok: false, code: 501, error: 'Not implemented' };
   }
 
@@ -118,11 +118,11 @@ export class APIService {
     return { ok: true, code: 200, data: [] };
   }
 
-  public async getGenre(id: number): Promise<IApiResponse<IGenre>> {
+  public async getGenre(_id: number): Promise<IApiResponse<IGenre>> {
     return { ok: false, code: 501, error: 'Not implemented' };
   }
 
-  public async getAlbumGenres(albumId: number): Promise<IApiResponse<IGenre[]>> {
+  public async getAlbumGenres(_albumId: number): Promise<IApiResponse<IGenre[]>> {
     return { ok: true, code: 200, data: [] };
   }
 
