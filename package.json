@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "serve": "serve -s dist -l 5605",
+    "update": "git pull && npm install && npm run build && pm2 restart authorplay",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
