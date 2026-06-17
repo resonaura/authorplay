@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { IArtist, IAlbum, ISong, IGenre, IApiResponse } from './interfaces';
 
-const API_BASE = import.meta.env.VITE_API_HOST as string;
-const ASSET_BASE = (import.meta.env.VITE_ASSET_HOST as string) ?? '';
+const API_BASE = (import.meta.env.VITE_API_HOST as string) ?? 'https://api.rsnra.link/v1';
+const ASSET_BASE = (import.meta.env.VITE_ASSET_HOST as string) ?? 'https://api.rsnra.link';
 
 function assetUrl(path: string | null | undefined): string {
   if (!path) return '';
