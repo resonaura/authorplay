@@ -7,6 +7,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6.svg?logo=typescript&logoColor=white)](package.json)
 [![Bundler](https://img.shields.io/badge/Bundler-Vite-646CFF.svg?logo=vite&logoColor=white)](package.json)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-authorplay.bottocloud.com-8A2BE2.svg)](https://authorplay.bottocloud.com/)
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/resonaura)
 
 **AuthorPlay** is a lightweight, accessible streaming platform originally envisioned to help small and emerging indie artists get heard and share their work with the world.
 
