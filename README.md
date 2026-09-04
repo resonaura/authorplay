@@ -10,6 +10,11 @@
 
 **AuthorPlay** is a lightweight, accessible streaming platform originally envisioned to help small and emerging indie artists get heard and share their work with the world.
 
+
+<p align="center">
+  <img src="media/authorplay-home.png" width="800" alt="AuthorPlay Music Streaming Platform" />
+</p>
+
 ---
 
 ## 📻 Background & Heritage
