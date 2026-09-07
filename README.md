@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/resonaura/authorplay/main/icon.png" width="64" height="64" alt="AuthorPlay Icon" />
+<img src="https://raw.githubusercontent.com/resonaura/authorplay/main/icon.png" width="64" alt="AuthorPlay Icon" />
 
 # AuthorPlay
 
