@@ -1,4 +1,4 @@
-<img src="icon.png" width="64" height="64" alt="AuthorPlay Icon" />
+<img src="https://raw.githubusercontent.com/resonaura/authorplay/main/icon.png" width="64" height="64" alt="AuthorPlay Icon" />
 
 # AuthorPlay
 
@@ -8,13 +8,14 @@
 [![Bundler](https://img.shields.io/badge/Bundler-Vite-646CFF.svg?logo=vite&logoColor=white)](package.json)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-authorplay.bottocloud.com-8A2BE2.svg)](https://authorplay.bottocloud.com/)
 
+[![Sponsor on GitHub](https://img.shields.io/badge/Sponsor%20on%20GitHub-EA4AAA?logo=github-sponsors&logoColor=white)](https://github.com/sponsors/resonaura)
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/resonaura)
 
 **AuthorPlay** is a lightweight, accessible streaming platform originally envisioned to help small and emerging indie artists get heard and share their work with the world.
 
 
 <p align="center">
-  <img src="media/authorplay-home.png" width="800" alt="AuthorPlay Music Streaming Platform" />
+  <img src="https://raw.githubusercontent.com/resonaura/authorplay/main/media/authorplay-home.png" width="800" alt="AuthorPlay Music Streaming Platform" />
 </p>
 
 ---
