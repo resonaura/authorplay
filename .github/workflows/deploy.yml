@@ -1,0 +1,20 @@
+name: Deploy AuthorPlay
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: [self-hosted, linux]
+    steps:
+      - name: Update & Restart Service
+        run: |
+          cd /home/resonaura/apps/authorplay
+          git pull
+          npm install
+          npm run build
+          pm2 restart authorplay
